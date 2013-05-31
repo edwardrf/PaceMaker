@@ -14,6 +14,8 @@ Parameters
 * animation (name/number of the animation to display)
 * queue     (optional true/false, default true, if true, the animation would be queued to display after the current animations)
 * length    (optional integer in milliseconds, the total time the animation should play for, if left ommited, the animation would be displayed using default fps)
+* invert    (optional true/false, default false, invert the color, 0->F, F->0, 1->E ...)
+* loop      (optional integer in number of times a animation is played, default 1, 0 to loop forever)
 
 
 Examples
