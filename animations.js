@@ -23,7 +23,7 @@ function loadAnimations(callback){
 					for(var f = 1; f <= results.length; f++){
 						for(var j = 0; j < results.length; j++){
 							if(results[j].name == a.name && a.frame == f){
-								results[j].data.push(100);
+								results[j].data.push(1000);
 								item.frames.push(results[j].data);
 								continue;
 							}
@@ -60,9 +60,9 @@ function output(file, callback) {
 	png.on('parsed', function(){
 		var arr = [];
 		var buf = '';
-		for(var i = 0; i < 8; i++){
-			for(var j = 0; j < 8; j++){
-				var p = i * 8 * 4 + j * 4;
+		for(var i = 7; i >= 0; i--){
+			for(var j = 7; j >= 0; j--){
+				var p = j * 8 * 4 + i * 4;
 				var r = png.data[p++];
 				var g = png.data[p++];
 				var b = png.data[p++];

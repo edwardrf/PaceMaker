@@ -9,6 +9,7 @@ exports.add = function(ms, url){
 	console.log("added job", job);
 	queue.push(job);
 	checkTimerTask();
+	endCallback = null;
 };
 
 exports.clear = function(){
@@ -29,10 +30,11 @@ function checkTimerTask(){
 }
 
 function doJob(){
+	console.log("queue length", queue.length);
 	if(queue.length > 0){
 		var job = queue.shift();
 		var url = URL.parse(job.url);
-		console.log("doing job", url);
+		//console.log("doing job", url);
 		http.get(url, function(res){
 			console.log('respnose is', res);
 		}).on('error', function(e) {
