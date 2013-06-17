@@ -64,9 +64,9 @@ function addAnimation(ans, animation, queue, length, invert, loop){
 		q.add(ans[animation].frames[f][8] / totalTime * length, cmd);
 	}
 	if(loop != 'false' && loop != '0'){
+		var loopNumber = parseInt(loop, 10);
 		q.setEndCallback(function(){
-			console.log("Callback length", length);
-			addAnimation(ans, animation, queue, length, invert, loop);
+			addAnimation(ans, animation, queue, length, invert, loopNumber - 1);
 		});
 	}
 }
