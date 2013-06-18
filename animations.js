@@ -23,7 +23,7 @@ function loadAnimations(callback){
 					for(var f = 1; f <= results.length; f++){
 						for(var j = 0; j < results.length; j++){
 							if(results[j].name == a.name && a.frame == f){
-								results[j].data.push(1000);
+								results[j].data.push(results[j].frameTime);
 								item.frames.push(results[j].data);
 								continue;
 							}
@@ -43,10 +43,12 @@ function output(file, callback) {
 	var chop = file.split('.')[0];
 	var animationName = "";
 	var frameNumber = 1;
+	var frameTime = 100;
 	if(chop.indexOf('_') >= 0){
 		var tmp = chop.split('_');
 		animationName = tmp[0];
 		frameNumber = tmp[1];
+		if(tmp.length > 2) frameTime = parseInt(tmp[2]);
 	}else if(chop.length == 1 && parseInt(chop) >= 0 && parseInt(chop) <= 9){
 		animationName = 'digit' + chop;
 	}else {
@@ -54,6 +56,7 @@ function output(file, callback) {
 	}
 	animation.name = animationName;
 	animation.frame = frameNumber;
+	animation.frameTime = frameTime;
 
 	var png = new PNG({filterType: -1});
 	var src = fs.createReadStream('img/' + file);
