@@ -43,7 +43,7 @@ function output(file, callback) {
 	var chop = file.split('.')[0];
 	var animationName = "";
 	var frameNumber = 1;
-	var frameTime = 100;
+	var frameTime = 1000;
 	if(chop.indexOf('_') >= 0){
 		var tmp = chop.split('_');
 		animationName = tmp[0];
