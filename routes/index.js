@@ -63,10 +63,12 @@ function addAnimation(ans, animation, queue, length, invert, loop){
 		}
 		q.add(ans[animation].frames[f][8] / totalTime * length, cmd);
 	}
-	if(loop != 'false' && loop != '0'){
+
+	if(loop != 1){
 		var loopNumber = parseInt(loop, 10);
+		if(loopNumber > 0) loopNumber--;
 		q.setEndCallback(function(){
-			addAnimation(ans, animation, queue, length, invert, loopNumber - 1);
+			addAnimation(ans, animation, queue, length, invert, loopNumber);
 		});
 	}
 }
