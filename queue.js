@@ -1,11 +1,23 @@
-var http = require('http');
-var URL = require('url');
-var queue = [];
+var http 		= require('http');
+var URL 		= require('url');
+var lamps 		= require('./lamps');
+var queue 		= [];
 var timerHandle = null;
 var endCallback = null;
+var exec 		= require('child_process').exec;
+var ready 		= false;
 
-exports.add = function(ms, url){
-	var job = {time: ms, url: url};
+lamps.reset(function(err){
+	if(!err){
+		ready = true;
+	}else {
+		console.log("FATAL : Failed to reset lamps controller.");
+		throw err;
+	}
+});
+
+exports.add = function(ms, cmd){
+	var job = {time: ms, cmd: cmd};
 	// console.log("added job", job);
 	queue.push(job);
 	checkTimerTask();
@@ -30,23 +42,14 @@ function checkTimerTask(){
 }
 
 function doJob(){
-	console.log("queue length", queue.length);
 	if(queue.length > 0){
-		var job = queue.shift();
-		var url = URL.parse(job.url);
-		//console.log("doing job", url);
-		http.get(url, function(res){
-			// console.log('respnose is', res);
-		}).on('error', function(e) {
-			// console.log("Got error: " + e);
-		});
-
-		http.get(url, function(res){
-			// console.log('respnose is', res);
-		}).on('error', function(e) {
-			// console.log("Got error: " + e);
-		});
-
+		if(ready){
+			ready = false; // Only allow one command at a time.
+			var job = queue.shift();
+			lamps.sendCmd(job.cmd, function(){ready = true;});
+		}else {
+			console.log("Job ignored as the interface is not ready.", job);
+		}
 		console.log("setting job at ", job.time);
 		timerHandle = setTimeout(doJob, job.time);
 	}else {

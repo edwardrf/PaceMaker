@@ -51,8 +51,7 @@ function addAnimation(ans, animation, queue, length, invert, loop){
 
 	// Play every frame of the animation
 	for(f = 0; f < ans[animation].frames.length; f++){
-		cmd = 'http://10.0.10.24/cgi-bin/p.lua?f';
-
+		cmd = '';
 		for(var i = 0; i < 8; i++){
 			for(var j = 0; j < 8; j++){
 				var val = parseInt(ans[animation].frames[f][i].charAt(j), 16);
