@@ -24,7 +24,9 @@ exports.reset = function(cb){
 };
 
 exports.sendCmd = function(cmd, callback){
-	exec("echo -ne '" + cmd + "' > " + device, callback);
+	exec("echo -ne 'f" + cmd + "' > " + device, function(){
+		exec("echo -ne 'f" + cmd + "' > " + device, callback);
+	});
 	var cmds = cmd.match(/.{1,8}/g);
 	console.log(cmds.join("\n"));
 }
