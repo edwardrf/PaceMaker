@@ -42,10 +42,10 @@ function checkTimerTask(){
 }
 
 function doJob(){
+	var job = queue.shift();
 	if(queue.length > 0){
 		if(ready){
 			ready = false; // Only allow one command at a time.
-			var job = queue.shift();
 			lamps.sendCmd(job.cmd, function(){ready = true;});
 		}else {
 			console.log("Job ignored as the interface is not ready.", job);
