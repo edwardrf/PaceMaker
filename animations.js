@@ -12,6 +12,7 @@ function loadAnimations(callback){
 			var animations = [];
 			for(var i = 0; i < results.length; i++){
 				var a = results[i];
+				if(a == null) continue;
 				if(a.name in animations){
 					continue; // This animation has been processed before
 				}else {
@@ -40,7 +41,10 @@ function loadAnimations(callback){
 function loadAnimationsFromFile(file, callback) {
 	var animation = {};
 	// Determine the animation name and frame number
-	var chop = file.split('.')[0];
+	var chops = file.split('.');
+	if(chops[1] != 'png' || chops[1] != 'PNG') return null; // Only allow png files
+
+	var chop = chops[0];
 	var animationName = "";
 	var frameNumber = 1;
 	var frameTime = 100; // Default frame time is 100ms
@@ -60,7 +64,9 @@ function loadAnimationsFromFile(file, callback) {
 	animation.frameTime = frameTime;
 
 	var png = new PNG({filterType: -1});
+	png.__filename=file;
 	var src = fs.createReadStream('img/' + file);
+	console.log(file);
 	png.on('parsed', function(){
 		var arr = [];
 		var buf = '';
@@ -79,6 +85,8 @@ function loadAnimationsFromFile(file, callback) {
 		}
 		animation.data = arr;
 		callback(null, animation);
+	}).on('error', function(err){
+		console.log(err, png);
 	});
 	src.pipe(png);
 }
