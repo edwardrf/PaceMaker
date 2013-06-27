@@ -5,14 +5,14 @@ var queue 		= [];
 var timerHandle = null;
 var endCallback = null;
 var exec 		= require('child_process').exec;
-var ready 		= false;
+var ready 		= true;
 
 lamps.reset(function(err){
 	if(!err){
 		ready = true;
 	}else {
 		console.log("FATAL : Failed to reset lamps controller.");
-		throw err;
+		// throw err;
 	}
 });
 
@@ -43,7 +43,7 @@ function checkTimerTask(){
 
 function doJob(){
 	var job = queue.shift();
-	if(queue.length > 0){
+	if(job){
 		if(ready){
 			ready = false; // Only allow one command at a time.
 			lamps.sendCmd(job.cmd, function(){ready = true;});

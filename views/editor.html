@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" ng-app="lh">
+<head>
+  <meta charset="utf-8">
+  <title>LH Editor 2</title>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/4.1.2/css/normalize.min.css"/>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/4.1.2/css/foundation.min.css"/>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.css"/>
+  <link rel="stylesheet" href="stylesheets/style.css"/>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/4.1.2/js/vendor/custom.modernizr.min.js"></script>
+  <meta name='viewport' content='width=device-width' />
+</head>
+<body>
+  <div class="row" ng-controller="DirectCtrl">
+    <lamp data="f" editable="true"></lamp>
+    <div class="row">{{query}}</div>
+  </div>
+
+  <!-- Foundation js files -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/4.1.2/js/foundation.min.js"></script>
+
+  <!-- Angularjs JS Files -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
+  <script src="javascripts/all.js"></script>
+
+  <!-- Partials -->
+  <script type=text/ng-template id="partials/edit.html">
+<div ng-controller="EditorCtrl">
+<div class='row'>
+  <div class="small-8 large-8 columns">
+    <lamp data="animation.getCurrentFrame().frame" editable="true"></lamp>
+  </div>
+  <div class="small-1 large-1 columns" ng-include src="'partials/color-selector-grayscale.html'"></div>
+  <div class="small-3 large-3 columns">
+    <a class="small button" href="javascript:void(0);" ng-click="run()" ng-hide="isPlaying">Run</a>
+    <a class="small button" href="javascript:void(0);" ng-click="stop()" ng-show="isPlaying">Stop</a><br/>
+    <a class="small button" href="javascript:void(0);" ng-click="moveLeft()">Move Left</a>
+    <a class="small button" href="javascript:void(0);" ng-click="moveRight()">Move Right</a><br/>
+    <a class="small button" href="javascript:void(0);" ng-click="moveUp()">Move Up</a>
+    <a class="small button" href="javascript:void(0);" ng-click="moveDown()">Move Down</a>
+  </div>
+  <div class="small-12 large-12 columns" ng-include src="'partials/timeline.html'"></div>
+</div>
+<div>{{message}}</div>
+  </script>
+</body>
+</html>
+

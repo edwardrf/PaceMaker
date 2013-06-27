@@ -8,7 +8,7 @@ var animations = null;
 function loadAnimations(callback){
 	fs.readdir('img', function(err, files){
 		files.sort();
-		async.map(files, output, function(err, results){
+		async.map(files, loadAnimationsFromFile, function(err, results){
 			var animations = [];
 			for(var i = 0; i < results.length; i++){
 				var a = results[i];
@@ -32,12 +32,12 @@ function loadAnimations(callback){
 					animations[a.name] = item;
 				}
 			}
-			callback(null, animations);
+			if(callback) callback(null, animations);
 		});
 	});
 }
 
-function output(file, callback) {
+function loadAnimationsFromFile(file, callback) {
 	var animation = {};
 	// Determine the animation name and frame number
 	var chop = file.split('.')[0];
@@ -54,6 +54,7 @@ function output(file, callback) {
 	}else {
 		animationName = chop;
 	}
+
 	animation.name = animationName;
 	animation.frame = frameNumber;
 	animation.frameTime = frameTime;

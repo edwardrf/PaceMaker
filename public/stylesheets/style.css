@@ -1,8 +1,101 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+table.lamp {
+	background-color: #555555;
+	border-spacing: 0px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	border: none;
 }
 
-a {
-  color: #00B7FF;
+table.lamp.large {
+	cursor: crosshair;
+}
+
+table.lamp tbody tr:nth-child(even){
+	background-color: transparent;
+}
+
+table.lamp.large td {
+	padding: 5px 5px;
+	width: 50px;
+	height: 50px;
+}
+
+table.lamp.medium td{
+	padding: 2px;
+	width: 30px;
+	height: 30px;
+}
+
+table.lamp.small td{
+	padding: 0px;
+	width: 8px;
+	height: 8px;
+}
+
+table.lamp tr.selected{
+	outline: 2px solid #FF0000;
+}
+
+.lamp div{
+	height: 100%;
+	width: 100%;
+	-webkit-border-radius: 1000px;
+	-moz-border-radius: 1000px;
+	-ms-border-radius: 1000px;
+	-o-border-radius: 1000px;
+	border-radius: 1000px;
+	border: 1px solid #CCCCCC;
+}
+
+.timeline {
+	overflow-x: scroll;
+	overflow-y: hidden;
+	font-size: 0.8em;
+}
+
+.timeline>div{
+	width: auto;
+	white-space: nowrap;
+	float: left;
+}
+
+.timeline .frame {
+	float: left;
+	width: 125px;
+	border: 1px solid white;
+}
+
+.timeline .frame.selected {
+	float: left;
+	width: 125px;
+	border: 1px solid gray;
+}
+
+.timeline .frame .lamp{
+	float: left;
+	margin-bottom: 0;
+}
+
+
+.timeline .frame>div{
+	float: left;
+}
+
+.timeline .frame>div.controls{
+	width: 40px;
+}
+
+.timeline .frame>div input{
+	width: 25px;
+	text-align: right;
+	border: none;
+}
+
+
+.timeline .frame a{
+	margin-bottom: 2px;
 }
