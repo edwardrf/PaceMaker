@@ -50,7 +50,6 @@ function doJob(){
 		}else {
 			console.log("Job ignored as the interface is not ready.", job);
 		}
-		console.log("setting job at ", job.time);
 		timerHandle = setTimeout(doJob, job.time);
 	}else {
 		timerHandle = null;

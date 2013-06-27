@@ -23,7 +23,7 @@ function loadAnimations(callback){
 					// Find all the frames
 					for(var f = 1; f <= results.length; f++){
 						for(var j = 0; j < results.length; j++){
-							if(results[j].name == a.name && a.frame == f){
+							if(results[j].name == a.name && results[j].frame == f){
 								results[j].data.push(results[j].frameTime);
 								item.frames.push(results[j].data);
 								continue;
@@ -62,11 +62,9 @@ function loadAnimationsFromFile(file, callback) {
 	animation.name = animationName;
 	animation.frame = frameNumber;
 	animation.frameTime = frameTime;
-
 	var png = new PNG({filterType: -1});
 	png.__filename=file;
 	var src = fs.createReadStream('img/' + file);
-	console.log(file);
 	png.on('parsed', function(){
 		var arr = [];
 		var buf = '';
