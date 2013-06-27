@@ -57,7 +57,7 @@ function addAnimation(ans, animation, queue, length, invert, loop){
 			for(var i = 0; i < 8; i++){
 				for(var j = 0; j < 8; j++){
 					var val = parseInt(ans[animation].frames[f][i].charAt(j), 16);
-					// if(invert == 'false' || invert == '0') val = 15 - val; // Invert the colour if asked
+					if(invert == 'false' || invert == '0') val = 15 - val; // Invert the colour if asked
 					if(val >= 15) val = 14;
 					cmd += val.toString(16);
 				}
