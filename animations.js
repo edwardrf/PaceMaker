@@ -42,7 +42,7 @@ function loadAnimationsFromFile(file, callback) {
 	var animation = {};
 	// Determine the animation name and frame number
 	var chops = file.split('.');
-	if(chops[1] != 'png' || chops[1] != 'PNG') return null; // Only allow png files
+	if(chops[1] != 'png' && chops[1] != 'PNG') return null; // Only allow png files
 
 	var chop = chops[0];
 	var animationName = "";
