@@ -5,28 +5,56 @@
 var animations = require('../animations');
 var q = require('../queue');
 
-exports.index = function(req, res){
-	var animation = req.query.animation;
-	var queue = req.query.queue;
-	var length = req.query.length;
-	var invert = req.query.inverted; // Change invert command to inverted
-	var loop = req.query.loop;
+var locking = null;
 
-	animations.get(animation, function(ans){
-		console.log(ans);
-		var cmd = '';
-		if(ans){ // If the animation exists
-			addAnimation(ans, queue, length, invert, loop);
-			// Render result
-			res.render('index', {
-				title: 'Command Accepted',
-				animation: ans,
-				cmd: cmd
-			});
-		}else {
-			res.render('editor.html');
+setInterval(function(){
+	if(locking != null){
+		var now = new Date();
+		if(now.getTime - locking.time.getTime() > 30000){
+			locking = null;
 		}
-	});
+	}
+}, 5000);
+
+exports.index = function(req, res){
+
+	if(locking != null && req.ip != locking.ip){
+		res.send("locked");
+		return;
+	}
+
+	var cmd = req.query.cmd;
+	if(cmd){
+		if(locking == null){
+			locking = {ip: req.ip};
+		}
+		locking.time = new Date();
+		q.clear();
+		q.add(0, cmd);
+		res.send("ok");
+	}else {
+		var animation = req.query.animation;
+		var queue = req.query.queue;
+		var length = req.query.length;
+		var invert = req.query.inverted; // Change invert command to inverted
+		var loop = req.query.loop;
+
+		animations.get(animation, function(ans){
+			console.log(ans);
+			var cmd = '';
+			if(ans){ // If the animation exists
+				addAnimation(ans, queue, length, invert, loop);
+				// Render result
+				res.render('index', {
+					title: 'Command Accepted',
+					animation: ans,
+					cmd: cmd
+				});
+			}else {
+				res.render('editor.html');
+			}
+		});
+	}
 };
 
 

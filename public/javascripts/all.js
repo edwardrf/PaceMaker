@@ -12,41 +12,101 @@ function DirectCtrl($scope, frame, color){
 	$scope.circles = [];
 	$scope.query = '';
 	color.setColor(14);
+	var cnt = 0;
 	setInterval(function(){
-		var query = 'f';
+		var query = '';
 		var post = false;
 		if($scope.circles.length > 0){
 			for(var i = 0; i < $scope.circles.length; i++){
 				var circle = $scope.circles[i];
-				drawCircle(circle);
-				growCircle(circle);
-				if(circle.r > 8) {
+				drawCircle(circle, $scope.f);
+				growCircle(circle, 0.5);
+				if(circle.r > 12) {
 					//Remove the circle
+					$scope.circles.splice(i--, 1);
 				}
 			}
 		}
-		for(var i = 0; i < $scope.f.length; i++){
-			for(var j = 0; j < $scope.f[i].length; j++){
-				if($scope.f[i][j] > 0){
-					$scope.f[i][j]--;
-					post = true;
+		if(cnt == 1){
+			for(var i = 0; i < $scope.f.length; i++){
+				for(var j = 0; j < $scope.f[i].length; j++){
+					if($scope.f[i][j] > 0){
+						$scope.f[i][j]-=3;
+						if($scope.f[i][j] < 0) $scope.f[i][j] = 0;
+						post = true;
+					}
+					// query += $scope.f[i][j].toString(16);
+					// UNSAFE swap of i, j to do a cheap transpose
+					// assuming the size is square
+					query += $scope.f[j][i].toString(16);
 				}
-				query += $scope.f[i][j].toString(16);
 			}
+			cnt = 0;
 		}
 		$scope.$apply();
 		if(post){
 			$scope.query = query;
-			$.get('http://lamp.local/cgi-bin/p.lua?' + query);
+			$.get('/?cmd=' + query);
 		}
-	}, 100);
+		cnt++;
+	}, 40);
 
 	function drawCircle(circle, frame){
-		console.log(circle);
+		var dx = circle.r;
+		var dy = 0;
+
+		while(dx >= 0){
+			if(dx > dy){
+				dx = Math.sqrt(circle.r * circle.r - dy * dy);
+				aaDot(circle.x - dx, Math.round(circle.y + dy), frame);
+				aaDot(circle.x + dx, Math.round(circle.y + dy), frame);
+				aaDot(circle.x - dx, Math.round(circle.y - dy), frame);
+				aaDot(circle.x + dx, Math.round(circle.y - dy), frame);
+				dy++;
+			}else {
+				dx = Math.floor(dx);
+				dy = Math.sqrt(circle.r * circle.r - dx * dx);
+				aaDot(Math.round(circle.x + dx), circle.y + dy, frame);
+				aaDot(Math.round(circle.x + dx), circle.y - dy, frame);
+				aaDot(Math.round(circle.x - dx), circle.y + dy, frame);
+				aaDot(Math.round(circle.x - dx), circle.y - dy, frame);
+				dx--;
+			}
+		}
 	}
 
 	function growCircle(circle, size){
 		circle.r = circle.r + size;
+	}
+
+	/**
+	 * x is integer
+	 * y is float
+	 */
+	function aaDot(x, y, frame){
+		var xi = Math.floor(x);
+		var xf = x - xi;
+		var yi = Math.floor(y);
+		var yf = y - yi;
+		var intensity = 14
+		if(xf == 0){
+			dot(x, yi		, Math.round((1 - yf) * intensity), frame);
+			dot(x, yi + 1	, Math.round(yf * intensity), frame);
+		}else {
+			dot(xi	  , y	, Math.round((1 - xf) * intensity), frame);
+			dot(xi + 1, y	, Math.round(xf * intensity), frame);
+		}
+	}
+
+	function dot(x, y, i, frame){
+		if(y >= 0 && y < frame.length){
+			if(x >= 0 && x < frame[y].length){
+				frame[y][x] += i;
+				if(frame[y][x] > 14){
+					frame[y][x] = 14;
+				}
+			}
+		}
 	}
 }
 angular.module('lh.directives', []).
@@ -151,6 +211,7 @@ angular.module('lh.lampDirective', []).
 			transclude	: true,
 			scope		: {
 				data		: '=',
+				circles		: '=',
 				editable	: '='
 			},
 			// templateUrl	: '/partials/lamp.html',
@@ -220,7 +281,7 @@ angular.module('lh.lampDirective', []).
 					var iy = Math.floor(fy);
 					if(ix >=0 && ix < scope.data.length && iy >=0 && iy < scope.data[ix].length){
 						scope.$apply(function(){
-							scope.circles.push({x: fx, y: fy, r: 0});
+							scope.circles.push({x: fx - 0.5, y: fy - 0.5, r: 0});
 						});
 					}
 				}
@@ -264,7 +325,7 @@ factory('frame', function(){
 		return copy;
 	};
 	frame.step = function(frm){
-		console.log(i);
+		// console.log(i);
 		for(var j = 0; j < SIZE; j++){
 			for(var k = 0; k < SIZE; k++){
 				frm[j][k] = i;

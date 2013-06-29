@@ -13,8 +13,8 @@
 </head>
 <body>
   <div class="row" ng-controller="DirectCtrl">
-    <lamp data="f" editable="true"></lamp>
-    <div class="row">{{query}}</div>
+    <lamp data="f" circles="circles" editable="true"></lamp>
+    <!-- <div class="row">{{query}}</div> -->
   </div>
 
   <!-- Foundation js files -->
@@ -28,23 +28,8 @@
 
   <!-- Partials -->
   <script type=text/ng-template id="partials/edit.html">
-<div ng-controller="EditorCtrl">
-<div class='row'>
-  <div class="small-8 large-8 columns">
-    <lamp data="animation.getCurrentFrame().frame" editable="true"></lamp>
-  </div>
-  <div class="small-1 large-1 columns" ng-include src="'partials/color-selector-grayscale.html'"></div>
-  <div class="small-3 large-3 columns">
-    <a class="small button" href="javascript:void(0);" ng-click="run()" ng-hide="isPlaying">Run</a>
-    <a class="small button" href="javascript:void(0);" ng-click="stop()" ng-show="isPlaying">Stop</a><br/>
-    <a class="small button" href="javascript:void(0);" ng-click="moveLeft()">Move Left</a>
-    <a class="small button" href="javascript:void(0);" ng-click="moveRight()">Move Right</a><br/>
-    <a class="small button" href="javascript:void(0);" ng-click="moveUp()">Move Up</a>
-    <a class="small button" href="javascript:void(0);" ng-click="moveDown()">Move Down</a>
-  </div>
-  <div class="small-12 large-12 columns" ng-include src="'partials/timeline.html'"></div>
-</div>
-<div>{{message}}</div>
+	<div ng-controller="EditorCtrl"/>
+	<div>{{message}}</div>
   </script>
 </body>
 </html>
