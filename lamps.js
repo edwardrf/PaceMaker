@@ -1,8 +1,11 @@
 var async = require('async');
 var util  = require('util');
 var exec  = require('child_process').exec;
+var fs = require('fs');
 
 var device = "/dev/ttyUSB0";
+
+var arduino = null;
 
 exports.reset = function(cb){
 	async.series([
@@ -19,6 +22,9 @@ exports.reset = function(cb){
 			}, 100);
 		}
 	], function(err, results){
+		// Placed here because we still want to test the writing to it.
+		arduino = fs.createWriteStream(device, {'flags': 'w'});
+		arduino.on('error', function(e){cb(e)});
 		cb(err);
 	});
 };
@@ -26,7 +32,7 @@ exports.reset = function(cb){
 exports.sendCmd = function(cmd, callback){
 	var cmds = cmd.match(/.{1,8}/g);
 	console.log("Displaying\n" + cmds.join("\n"));
-	exec("echo -ne 'f" + cmd + "' > " + device, function(){
-		exec("echo -ne 'f" + cmd + "' > " + device, callback);
+	arduino.write('f' + cmd, 'utf8', function(){
+		arduino.write('f' + cmd, 'utf8', callback);
 	});
 }
