@@ -10,6 +10,7 @@
     "jade": "*",
     "ejs": "*",
     "pngjs": "*",
-    "async": "*"
+    "async": "*",
+    "chokidar": "*"
   }
 }

@@ -2,69 +2,91 @@ var fs = require('fs'),
     PNG = require('pngjs').PNG,
     util = require('util'),
     async = require('async');
+    chokidar = require('chokidar');
 
-var animations = null;
+var animations = [];
 
-function loadAnimations(callback){
-	fs.readdir('img', function(err, files){
-		files.sort();
-		async.map(files, loadAnimationsFromFile, function(err, results){
-			var animations = [];
-			for(var i = 0; i < results.length; i++){
-				var a = results[i];
-				if(a == null) continue;
-				if(a.name in animations){
-					continue; // This animation has been processed before
-				}else {
-					var item  = {
-						name: a.name,
-						frames: []
-					};
-					// Find all the frames
-					for(var f = 1; f <= results.length; f++){
-						for(var j = 0; j < results.length; j++){
-							if(results[j].name == a.name && results[j].frame == f){
-								results[j].data.push(results[j].frameTime);
-								item.frames.push(results[j].data);
-								continue;
-							}
-						}
-					}
-					animations[a.name] = item;
-				}
-			}
-			if(callback) callback(null, animations);
-		});
+var watcher = chokidar.watch('img');
+watcher
+	.on('add',		addAnimation)
+	.on('change',	addAnimation)
+	.on('unlink',	removeAnimation)
+	.on('error', function(error) {console.error('FS watcher error', error);});
+
+function addAnimation(file, stats){
+	loadOneFrameFromFile(file, function(err, frame){
+		if(frame == null) {
+			console.log("Failed to load animation from " + file);
+			return;
+		}
+		var animation = null;
+		if(frame.name in animations){
+			animation = animations[frame.name];
+		}else {
+			animation = {
+				name: frame.name,
+				frames: []
+			};
+			animations[frame.name] = animation;
+		}
+		// Create place holders for earlier frames
+		while(animation.frames.length < frame.frame) animation.frames.push(null);
+		frame.data.push(frame.frameTime); // Hack: frame time is the last number in a frame.
+		console.log(frame.frame);
+		animation.frames[frame.frame - 1] = frame.data;
 	});
 }
 
-function loadAnimationsFromFile(file, callback) {
-	var animation = {};
-	// Determine the animation name and frame number
+function removeAnimation(file, stats){
+	var animation = getFileMetaInfo(file);
+	if(animation && animation.name in animations){
+		var frames = animations[animation.name].frames;
+		frames[animation.frameNumber] = null;
+		var allNull = true;
+		for(var i = frames.length - 1; i >= 0 ; i--){
+			if(frames[i] != null){
+				frames.splice(i, 1)
+			}else {
+				break;
+			}
+		}
+		// Remove the animation if all the frames are removed.
+		if(frames.length == 0){
+			delete animations[animation.name];
+		}
+	}
+}
+
+function getFileMetaInfo(file){
 	var chops = file.split('.');
 	if(chops[1] != 'png' && chops[1] != 'PNG') return null; // Only allow png files
 
-	var chop = chops[0];
-	var animationName = "";
-	var frameNumber = 1;
-	var frameTime = 100; // Default frame time is 100ms
+	// Defaults
+	meta = {
+		name: '',
+		frame: 1,
+		frameTime: 100
+	};
+
+	var chop = chops[0].substr(4);
 	if(chop.indexOf('_') >= 0){
 		var tmp = chop.split('_');
-		animationName = tmp[0];
-		frameNumber = tmp[1];
-		if(tmp.length > 2) frameTime = parseInt(tmp[2]);
+		meta.name = tmp[0];
+		meta.frame = tmp[1];
+		if(tmp.length > 2) meta.frameTime = parseInt(tmp[2]);
 	}else if(chop.length == 1 && parseInt(chop) >= 0 && parseInt(chop) <= 9){
-		animationName = 'digit' + chop;
+		meta.name = 'digit' + chop;
 	}else {
-		animationName = chop;
+		meta.name = chop;
 	}
+	return meta;
+}
 
-	animation.name = animationName;
-	animation.frame = frameNumber;
-	animation.frameTime = frameTime;
+function loadOneFrameFromFile(file, callback) {
+	var animation = getFileMetaInfo(file);
+	if(animation == null) callback(null, null);
 	var png = new PNG({filterType: -1});
-	png.__filename=file;
-	var src = fs.createReadStream('img/' + file);
+	var src = fs.createReadStream(file);
 	png.on('parsed', function(){
 		var arr = [];
 		var buf = '';
@@ -85,19 +107,17 @@ function loadAnimationsFromFile(file, callback) {
 		callback(null, animation);
 	}).on('error', function(err){
 		console.log(err, png);
+		callback(err, null);
 	});
 	src.pipe(png);
 }
 
-exports.get = function(callback){
-	if(animations !== null){
-		callback(animations);
+exports.get = function(name, callback){
+	if(name in animations){
+		callback(animations[name]);
 	}else {
-		loadAnimations(function(err, ans){
-			animations = ans;
-			callback(animations);
-		});
+		callback(null);
 	}
 };
 
-exports.load = loadAnimations;
+// exports.load = loadAnimations;
