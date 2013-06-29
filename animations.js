@@ -6,7 +6,7 @@ var fs = require('fs'),
 
 var animations = [];
 
-var watcher = chokidar.watch('img');
+var watcher = chokidar.watch(['img', 'ftp']);
 watcher
 	.on('add',		addAnimation)
 	.on('change',	addAnimation)
@@ -28,11 +28,11 @@ function addAnimation(file, stats){
 				frames: []
 			};
 			animations[frame.name] = animation;
+			console.log("Creating animation " + frame.name);
 		}
 		// Create place holders for earlier frames
 		while(animation.frames.length < frame.frame) animation.frames.push(null);
 		frame.data.push(frame.frameTime); // Hack: frame time is the last number in a frame.
-		console.log(frame.frame);
 		animation.frames[frame.frame - 1] = frame.data;
 	});
 }
