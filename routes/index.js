@@ -4,6 +4,7 @@
 
 var animations = require('../animations');
 var q = require('../queue');
+var circles = require('../circles');
 
 var locking = null;
 
@@ -29,8 +30,13 @@ exports.index = function(req, res){
 			locking = {ip: req.ip};
 		}
 		locking.time = new Date();
-		q.clear();
-		q.add(0, cmd);
+		console.log(cmd.substring(0, 1));
+		if(cmd.substring(0, 1) == 'x'){
+			circles.addCircle({x: parseFloat(req.query.x), y: parseFloat(req.query.y), r: 0});
+		}else {
+			q.clear();
+			q.add(0, cmd);
+		}
 		res.send("ok");
 	}else {
 		var animation = req.query.animation;

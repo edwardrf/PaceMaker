@@ -46,7 +46,7 @@ function DirectCtrl($scope, frame, color){
 		$scope.$apply();
 		if(post){
 			$scope.query = query;
-			$.get('/?cmd=' + query);
+			// $.get('/?cmd=' + query);// USE circle command x instead for speed reasons
 		}
 		cnt++;
 	}, 40);
@@ -280,6 +280,7 @@ angular.module('lh.lampDirective', []).
 					var ix = Math.floor(fx);
 					var iy = Math.floor(fy);
 					if(ix >=0 && ix < scope.data.length && iy >=0 && iy < scope.data[ix].length){
+						$.get('/?cmd=x&x=' + fx + '&y=' + fy);
 						scope.$apply(function(){
 							scope.circles.push({x: fx - 0.5, y: fy - 0.5, r: 0});
 						});
