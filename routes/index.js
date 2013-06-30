@@ -10,11 +10,11 @@ var locking = null;
 setInterval(function(){
 	if(locking != null){
 		var now = new Date();
-		if(now.getTime() - locking.time.getTime() > 30000){
+		if(now.getTime() - locking.time.getTime() > 10000){
 			locking = null;
 		}
 	}
-}, 5000);
+}, 2000);
 
 exports.index = function(req, res){
 
