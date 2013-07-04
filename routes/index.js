@@ -19,27 +19,41 @@ setInterval(function(){
 
 exports.index = function(req, res){
 
-	if(locking != null && req.ip != locking.ip){
-		res.send("locked");
+	var cmd = req.query.cmd;
+	var animation = req.query.animation;
+	if(!cmd && !animation){
+		res.render('editor.html');
 		return;
 	}
 
-	var cmd = req.query.cmd;
+	if(locking != null && req.ip != locking.ip){
+		res.send("Someone else is connected, please try again later");
+		return;
+	}
+
 	if(cmd){
+		// First time connection
 		if(locking == null){
 			locking = {ip: req.ip};
+			q.clear();
+			// Play the show connected animation on first connect
+			animations.get('showConnected', function(ans){
+				addAnimation(ans, 'false');
+				res.send("connected");
+			});
 		}
+
+		// Update the lock time
 		locking.time = new Date();
-		console.log(cmd.substring(0, 1));
+
+		// Execute the command, x is for drawing circle.
 		if(cmd.substring(0, 1) == 'x'){
 			circles.addCircle({x: parseFloat(req.query.x), y: parseFloat(req.query.y), r: 0});
 		}else {
-			q.clear();
 			q.add(0, cmd);
 		}
 		res.send("ok");
 	}else {
-		var animation = req.query.animation;
 		var queue = req.query.queue;
 		var length = req.query.length;
 		var invert = req.query.inverted; // Change invert command to inverted
@@ -56,8 +70,6 @@ exports.index = function(req, res){
 					animation: ans,
 					cmd: cmd
 				});
-			}else {
-				res.render('editor.html');
 			}
 		});
 	}
@@ -98,7 +110,7 @@ function addAnimation(ans, queue, length, invert, loop){
 		}
 	}while(--l > 0);
 
-	if(loop == 0){
+	if(loop === 0){
 		q.setEndCallback(function(){
 			addAnimation(ans, queue, length, invert, 0);
 		});

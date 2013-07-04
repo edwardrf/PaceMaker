@@ -14,7 +14,7 @@ var frame = [
 var circles = [];
 var done = true;
 
-setInterval(drawFrame, 30);
+setInterval(drawFrame, 40);
 
 exports.addCircle = function(circle){
 	console.log(circle);

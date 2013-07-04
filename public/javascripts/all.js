@@ -11,8 +11,61 @@ function DirectCtrl($scope, frame, color){
 	$scope.f = frame.newFrame();
 	$scope.circles = [];
 	$scope.query = '';
+	$scope.progress = 0;
+	$scope.connected = false;
+	$scope.errorMsg = null;
+	$scope.connecting = false;
+
 	color.setColor(14);
 	var cnt = 0;
+	var overlay = $('#overlay');
+	overlay.foundation('reveal', 'open');
+	var disconnectHandle = null;
+
+	$scope.connect = function(){
+		if($scope.connecting) return;
+		$scope.connecting = true;
+		$scope.progressVisible = ''; // Remove class hide
+		$.get("/?cmd=00000000eeeeeeee00000000aaaaaaaa00000000666666660000000022222222", function(res){
+			if(res == 'connected'){
+				$scope.connected = true;
+				disconnectHandle = setTimeout(disconnect, 10000);
+			}else {
+				$scope.connected = false;
+				$scope.errorMsg = res;
+			}
+		});
+		connectProgress(function(){
+			if($scope.connected){
+				overlay.foundation('reveal', 'close');
+			}else {
+				console.log('not connected');
+			}
+			$scope.progress = 0;
+			$scope.connecting = false;
+		});
+	};
+
+	$scope.updateAction = function(){
+		clearTimeout(disconnectHandle);
+		disconnectHandle = setTimeout(disconnect, 10000);
+	}
+
+	function disconnect(){
+		$scope.connected = false;
+		$scope.errorMsg = "No action timeout, disconnected";
+		overlay.foundation('reveal', 'open');
+	}
+
+	function connectProgress(callback){
+		if($scope.progress < 100){
+			$scope.progress += 5;
+			setTimeout(function(){connectProgress(callback);}, 50);
+		}else{
+			callback();
+		}
+	}
+
 	setInterval(function(){
 		var query = '';
 		var post = false;
@@ -212,7 +265,8 @@ angular.module('lh.lampDirective', []).
 			scope		: {
 				data		: '=',
 				circles		: '=',
-				editable	: '='
+				editable	: '=',
+				updateAction: '='
 			},
 			// templateUrl	: '/partials/lamp.html',
 			link		: function(scope, elm, attrs){
@@ -281,6 +335,7 @@ angular.module('lh.lampDirective', []).
 					var iy = Math.floor(fy);
 					if(ix >=0 && ix < scope.data.length && iy >=0 && iy < scope.data[ix].length){
 						$.get('/?cmd=x&x=' + fx + '&y=' + fy);
+						scope.updateAction();
 						scope.$apply(function(){
 							scope.circles.push({x: fx - 0.5, y: fy - 0.5, r: 0});
 						});

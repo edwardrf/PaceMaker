@@ -13,8 +13,14 @@
 </head>
 <body>
   <div class="row" ng-controller="DirectCtrl">
-    <lamp data="f" circles="circles" editable="true"></lamp>
+    <lamp data="f" circles="circles" editable="true" update-action='updateAction'></lamp>
     <!-- <div class="row">{{query}}</div> -->
+    <div id="overlay" class="small reveal-modal">
+		<button ng-click="connect()">Connect</button>
+		<div class="progress" ng-show="progress > 0">
+			<span class="meter" style="width: {{progress}}%;"></span>
+		</div>
+		<div ng-show="errorMsg" class="alert-box alert">{{errorMsg}}</div>
   </div>
 
   <!-- Foundation js files -->
@@ -31,6 +37,7 @@
 	<div ng-controller="EditorCtrl"/>
 	<div>{{message}}</div>
   </script>
+
 </body>
 </html>
 

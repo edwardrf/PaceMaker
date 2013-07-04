@@ -99,3 +99,23 @@ table.lamp tr.selected{
 .timeline .frame a{
 	margin-bottom: 2px;
 }
+
+
+div.overlay {
+	position: absolute;
+	filter: alpha(opacity=30);
+	opacity: 0.3;
+	-moz-opacity: 0.3;
+	z-index: 999;
+	height: 1000px;
+	width: 100%;
+	top: 0;
+	left: 0;
+	background-color: black;
+	background-position: center;
+}
+
+div.overlay div{
+	margin: 200px auto;
+	width: 200px;
+}
