@@ -31,7 +31,7 @@ exports.reset = function(cb){
 
 exports.sendCmd = function(cmd, callback){
 	var cmds = cmd.match(/.{1,8}/g);
-	console.log("Displaying\n" + cmds.join("\n"));
+	//console.log("Displaying\n" + cmds.join("\n"));
 	arduino.write('f' + cmd, 'utf8', function(){
 		arduino.write('f' + cmd, 'utf8', callback);
 	});
