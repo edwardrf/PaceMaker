@@ -9,7 +9,7 @@ var circles = require('../circles');
 var locking = null;
 
 setInterval(function(){
-	if(locking != null){
+	if(locking != null && locking.time != null){
 		var now = new Date();
 		if(now.getTime() - locking.time.getTime() > 10000){
 			locking = null;
